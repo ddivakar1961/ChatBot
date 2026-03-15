@@ -29,11 +29,10 @@ getDownloadURL
 
 
 const firebaseConfig={
-apiKey:"YOUR_KEY",
-authDomain:"YOUR_DOMAIN",
-projectId:"YOUR_PROJECT",
-storageBucket:"YOUR_BUCKET",
-appId:"YOUR_APP"
+apiKey:"AIzaSyCObeuL8-2slMBK3I_WMSKqnHIFK11N0is",
+authDomain:"chatbot-f2c91.firebaseapp.com",
+projectId:"chatbot-f2c91",
+appId:"1:393885921955:web:8c95a6e8f88548d2df0516"
 };
 
 const app=initializeApp(firebaseConfig);
