@@ -2,89 +2,91 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Chat</title>
+<title>Chat App</title>
 
 <style>
 
 body{
 margin:0;
 font-family:Arial;
-background:#111827;
+background:#111;
+color:white;
 display:flex;
-justify-content:center;
-align-items:center;
 height:100vh;
 }
 
+.contacts{
+width:250px;
+background:#222;
+overflow:auto;
+}
+
+.contact{
+display:flex;
+align-items:center;
+padding:10px;
+cursor:pointer;
+border-bottom:1px solid #333;
+}
+
+.contact img{
+width:35px;
+height:35px;
+border-radius:50%;
+margin-right:10px;
+}
+
+.online{
+color:#00ff7f;
+font-size:12px;
+}
+
 .chat{
-width:380px;
-height:600px;
-background:#1f2937;
+flex:1;
 display:flex;
 flex-direction:column;
-border-radius:10px;
-overflow:hidden;
-color:white;
-}
-
-.header{
-background:#10b981;
-padding:12px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.status{
-font-size:12px;
-color:#d1fae5;
 }
 
 .messages{
 flex:1;
-overflow-y:auto;
+overflow:auto;
 padding:10px;
 }
 
-.msg{
-margin:6px 0;
-padding:8px 10px;
-border-radius:10px;
-max-width:70%;
+.message{
+background:#333;
+padding:8px;
+margin:5px;
+border-radius:6px;
+max-width:60%;
 }
 
 .me{
-background:#10b981;
+background:#00b894;
 margin-left:auto;
-}
-
-.other{
-background:#374151;
-}
-
-.msg img{
-max-width:100%;
-border-radius:8px;
-margin-top:5px;
 }
 
 .input{
 display:flex;
-background:#111827;
+background:#222;
 }
 
 .input input{
 flex:1;
 padding:10px;
 border:none;
-outline:none;
 }
 
-.input button{
+button{
 padding:10px;
 border:none;
-background:#10b981;
+background:#00b894;
 color:white;
+}
+
+.light{
+background:white;
+color:black;
 }
 
 </style>
@@ -92,150 +94,29 @@ color:white;
 
 <body>
 
+<div class="contacts" id="contacts"></div>
+
 <div class="chat">
 
-<div class="header">
-<span>Chat Room</span>
-<span id="status" class="status">offline</span>
-</div>
+<div id="typing"></div>
 
 <div id="messages" class="messages"></div>
 
 <div class="input">
 
-<input id="text" placeholder="Type message">
+<input id="msg" placeholder="Message">
 
-<input type="file" id="image">
+<input type="file" id="file">
 
 <button onclick="send()">Send</button>
 
-</div>
+<button onclick="toggleTheme()">🌙</button>
 
 </div>
 
-<script type="module">
+</div>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-
-import {
-getAuth,
-onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-import {
-getFirestore,
-collection,
-addDoc,
-query,
-orderBy,
-onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-import {
-getStorage,
-ref,
-uploadBytes,
-getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
-
-const firebaseConfig = {
-
-apiKey:"AIzaSyCObeuL8-2slMBK3I_WMSKqnHIFK11N0is",
-authDomain:"chatbot-f2c91.firebaseapp.com",
-projectId:"chatbot-f2c91",
-appId:"1:393885921955:web:8c95a6e8f88548d2df0516"
-
-};
-
-const app=initializeApp(firebaseConfig)
-
-const auth=getAuth(app)
-
-const db=getFirestore(app)
-
-const storage=getStorage(app)
-
-let currentUser=null
-
-onAuthStateChanged(auth,(user)=>{
-
-if(user){
-
-currentUser=user
-
-status.innerText="online"
-
-}
-
-})
-
-
-// send message
-window.send=async function(){
-
-let text=document.getElementById("text").value
-
-let img=document.getElementById("image").files[0]
-
-let imageUrl=null
-
-if(img){
-
-let storageRef=ref(storage,"chatImages/"+Date.now())
-
-await uploadBytes(storageRef,img)
-
-imageUrl=await getDownloadURL(storageRef)
-
-}
-
-await addDoc(collection(db,"messages"),{
-
-name:currentUser.email,
-
-text:text,
-
-image:imageUrl,
-
-time:Date.now()
-
-})
-
-text.value=""
-
-}
-
-
-// realtime messages
-const q=query(collection(db,"messages"),orderBy("time"))
-
-onSnapshot(q,(snapshot)=>{
-
-messages.innerHTML=""
-
-snapshot.forEach(doc=>{
-
-let data=doc.data()
-
-let div=document.createElement("div")
-
-div.className="msg "+(data.name==currentUser?.email?"me":"other")
-
-div.innerHTML="<b>"+data.name+"</b><br>"+(data.text||"")
-
-if(data.image){
-
-div.innerHTML+="<br><img src='"+data.image+"'>"
-
-}
-
-messages.appendChild(div)
-
-})
-
-})
-
-</script>
+<script type="module" src="chat.js"></script>
 
 </body>
 </html>
